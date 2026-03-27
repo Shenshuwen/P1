@@ -1,0 +1,397 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="P1.Views.HistoryPageView"
+			  xmlns:vm="clr-namespace:P1.ViewModels"
+             x:DataType="vm:HistoryPageViewModel">
+
+	<Design.DataContext>
+		<vm:HistoryPageViewModel/>
+	</Design.DataContext>
+	<Grid RowDefinitions="Auto,*,Auto">
+		<!-- 标题栏 - 深紫色渐变 -->
+		<Border Grid.Row="0">
+			<Border.Styles>
+				<Style Selector="Border">
+					<Setter Property="Background">
+						<LinearGradientBrush StartPoint="0%,0%" EndPoint="100%,0%">
+							<GradientStop Offset="0" Color="#1A1032"/>
+							<GradientStop Offset="1" Color="#2A1A4A"/>
+						</LinearGradientBrush>
+					</Setter>
+				</Style>
+			</Border.Styles>
+			<Border Padding="15">
+				<Grid ColumnDefinitions="Auto,*,Auto">
+					<TextBlock Text="🌐 智慧实验室平台"
+                               FontSize="24"
+                               FontWeight="Bold"
+                               Foreground="#E0B0FF"
+                               VerticalAlignment="Center"/>
+				</Grid>
+			</Border>
+		</Border>
+
+		<!-- 主要内容区域 -->
+		<TabControl Grid.Row="1" Margin="10">
+			<TabControl.Styles>
+				<Style Selector="TabControl">
+					<Setter Property="Background" Value="#0F0A1F"/>
+				</Style>
+				<Style Selector="TabItem">
+					<Setter Property="Background" Value="#2A1A4A"/>
+					<Setter Property="Foreground" Value="#E0B0FF"/>
+				</Style>
+				<Style Selector="TabItem:selected">
+					<Setter Property="Background" Value="#3A2A5A"/>
+					<Setter Property="Foreground" Value="#FFFFFF"/>
+				</Style>
+			</TabControl.Styles>
+			<!-- 历史数据标签页 -->
+			<TabItem Header="📋 历史数据">
+
+				<Grid RowDefinitions="Auto,*,Auto" Margin="10">
+
+					<!-- ================= 筛选栏 ================= -->
+					<Border Grid.Row="0"
+							Background="#1A1032"
+							CornerRadius="12"
+							Padding="15"
+							Margin="0,0,0,15">
+
+						<StackPanel Orientation="Horizontal" Spacing="15">
+
+							<TextBlock Text="时间范围:"
+									   VerticalAlignment="Center"
+									   Foreground="#E0B0FF"
+									   FontSize="14"/>
+
+							<ComboBox Width="150"
+									  SelectedIndex="0"
+									  Background="#2A1A4A"
+									  Foreground="#E0B0FF"
+									  BorderBrush="#4A2A6A">
+								<ComboBoxItem>最近24小时</ComboBoxItem>
+								<ComboBoxItem>最近7天</ComboBoxItem>
+								<ComboBoxItem>最近30天</ComboBoxItem>
+								<ComboBoxItem>自定义范围</ComboBoxItem>
+							</ComboBox>
+
+							<TextBlock Text="数据类型:"
+									   VerticalAlignment="Center"
+									   Foreground="#E0B0FF"
+									   FontSize="14"
+									   Margin="20,0,0,0"/>
+
+							<ComboBox Width="150"
+									  SelectedIndex="0"
+									  Background="#2A1A4A"
+									  Foreground="#E0B0FF"
+									  BorderBrush="#4A2A6A">
+								<ComboBoxItem>全部数据</ComboBoxItem>
+								<ComboBoxItem>风速</ComboBoxItem>
+								<ComboBoxItem>压力</ComboBoxItem>
+								<ComboBoxItem>温度</ComboBoxItem>
+								<ComboBoxItem>湿度</ComboBoxItem>
+							</ComboBox>
+
+							<Button Content="🔍 查询"
+									Background="#4A2A6A"
+									Foreground="#FFFFFF"
+									Padding="25,8"
+									CornerRadius="8"
+									Margin="20,0,0,0"/>
+
+						</StackPanel>
+
+					</Border>
+
+
+					<!-- ================= 表格区域 ================= -->
+					<Border Grid.Row="1"
+							Background="#1A1032"
+							CornerRadius="12"
+							Padding="10">
+
+						<Grid RowDefinitions="Auto,*">
+
+							<!-- 标题 -->
+							<TextBlock Text="历史数据记录"
+									   FontSize="16"
+									   FontWeight="SemiBold"
+									   Foreground="#E0B0FF"
+									   Margin="0,0,0,10"/>
+
+							<!-- 表格 -->
+							<Grid Grid.Row="1" RowDefinitions="Auto,*">
+
+								<!-- 表头 -->
+								<Border Background="#2A1A4A"
+										Padding="10"
+										CornerRadius="8"
+										Margin="0,0,0,5">
+
+									<Grid ColumnDefinitions="150,*,*,*,*">
+										<TextBlock Grid.Column="0" Text="⏱️ 时间" Foreground="#E0B0FF"/>
+										<TextBlock Grid.Column="1" Text="🌬️ 风速" Foreground="#E0B0FF" HorizontalAlignment="Center"/>
+										<TextBlock Grid.Column="2" Text="📊 压力" Foreground="#E0B0FF" HorizontalAlignment="Center"/>
+										<TextBlock Grid.Column="3" Text="🌡️ 温度" Foreground="#E0B0FF" HorizontalAlignment="Center"/>
+										<TextBlock Grid.Column="4" Text="💧 湿度" Foreground="#E0B0FF" HorizontalAlignment="Center"/>
+									</Grid>
+
+								</Border>
+
+								<ScrollViewer Grid.Row="1"
+              VerticalScrollBarVisibility="Auto">
+
+    <ItemsControl ItemsSource="{Binding History}">
+
+        <ItemsControl.ItemTemplate>
+
+            <DataTemplate>
+
+                <Border Background="#2A1A4A"
+                        Padding="10"
+                        Margin="0,0,0,2"
+                        CornerRadius="4">
+
+                    <Grid ColumnDefinitions="150,*,*,*,*">
+
+                        <!-- 时间 -->
+                        <TextBlock Grid.Column="0"
+                                   Text="{Binding hisTime, StringFormat=yyyy-MM-dd HH:mm:ss}"
+                                   Foreground="#B39DDB"/>
+
+                        <!-- 风速 -->
+                        <TextBlock Grid.Column="1"
+                                   Text="{Binding hisWind, StringFormat={}{0:F2}}"
+                                   Foreground="#E0B0FF"
+                                   HorizontalAlignment="Center"/>
+
+                        <!-- 压力 -->
+                        <TextBlock Grid.Column="2"
+                                   Text="{Binding hisPressure, StringFormat={}{0:F2}}"
+                                   Foreground="#E0B0FF"
+                                   HorizontalAlignment="Center"/>
+
+                        <!-- 温度 -->
+                        <TextBlock Grid.Column="3"
+                                   Text="{Binding hisTemperature, StringFormat={}{0:F2}}"
+                                   Foreground="#E0B0FF"
+                                   HorizontalAlignment="Center"/>
+
+                        <!-- 湿度 -->
+                        <TextBlock Grid.Column="4"
+                                   Text="{Binding hisHumidity, StringFormat={}{0:F2}}"
+                                   Foreground="#E0B0FF"
+                                   HorizontalAlignment="Center"/>
+
+                    </Grid>
+
+                </Border>
+
+            </DataTemplate>
+
+        </ItemsControl.ItemTemplate>
+
+    </ItemsControl>
+
+</ScrollViewer>
+
+							</Grid>
+
+						</Grid>
+
+					</Border>
+
+
+					<!-- ================= 底部按钮 ================= -->
+					<Grid Grid.Row="2" ColumnDefinitions="*,Auto" Margin="0,15,0,0">
+
+						<!-- 分页 -->
+						<StackPanel Orientation="Horizontal"
+									HorizontalAlignment="Center"
+									Spacing="8">
+
+							<Button Content="◀◀"/>
+							<Button Content="◀"/>
+
+							<Border Background="#4A2A6A" Padding="15,5" CornerRadius="6">
+								<TextBlock Text="1/10" Foreground="White"/>
+							</Border>
+
+							<Button Content="▶"/>
+							<Button Content="▶▶"/>
+
+						</StackPanel>
+
+						<!-- 导出 -->
+						<Button Grid.Column="1"
+								Command="{Binding ExportHistoryData}"
+								Content="📥 导出Excel"
+								Background="#4A2A6A"
+								Foreground="White"
+								Padding="20,8"
+								CornerRadius="8"/>
+
+					</Grid>
+
+				</Grid>
+
+			</TabItem>
+
+			<!-- 数据分析标签页 -->
+			<TabItem Header="📈 数据分析">
+				<ScrollViewer VerticalScrollBarVisibility="Auto">
+					<Grid RowDefinitions="Auto,*" Margin="10">
+
+						<!-- 统计卡片 -->
+						<WrapPanel Grid.Row="0"
+								   Margin="0,0,0,20"
+								   HorizontalAlignment="Center">
+
+							<Border Background="#1A1032"
+									CornerRadius="12"
+									Padding="20"
+									Margin="5"
+									Width="180">
+								<StackPanel>
+									<TextBlock Text="平均风速"
+											   FontSize="14"
+											   Foreground="#B39DDB"
+											   HorizontalAlignment="Center"/>
+									<TextBlock Text="4.8 m/s"
+											   FontSize="24"
+											   FontWeight="Bold"
+											   Foreground="#E0B0FF"
+											   HorizontalAlignment="Center"/>
+								</StackPanel>
+							</Border>
+
+							<Border Background="#1A1032"
+									CornerRadius="12"
+									Padding="20"
+									Margin="5"
+									Width="180">
+								<StackPanel>
+									<TextBlock Text="平均压力"
+											   FontSize="14"
+											   Foreground="#B39DDB"
+											   HorizontalAlignment="Center"/>
+									<TextBlock Text="1012.5 hPa"
+											   FontSize="24"
+											   FontWeight="Bold"
+											   Foreground="#E0B0FF"
+											   HorizontalAlignment="Center"/>
+								</StackPanel>
+							</Border>
+
+							<Border Background="#1A1032"
+									CornerRadius="12"
+									Padding="20"
+									Margin="5"
+									Width="180">
+								<StackPanel>
+									<TextBlock Text="平均温度"
+											   FontSize="14"
+											   Foreground="#B39DDB"
+											   HorizontalAlignment="Center"/>
+									<TextBlock Text="22.8 °C"
+											   FontSize="24"
+											   FontWeight="Bold"
+											   Foreground="#E0B0FF"
+											   HorizontalAlignment="Center"/>
+								</StackPanel>
+							</Border>
+
+							<Border Background="#1A1032"
+									CornerRadius="12"
+									Padding="20"
+									Margin="5"
+									Width="180">
+								<StackPanel>
+									<TextBlock Text="平均湿度"
+											   FontSize="14"
+											   Foreground="#B39DDB"
+											   HorizontalAlignment="Center"/>
+									<TextBlock Text="63 %"
+											   FontSize="24"
+											   FontWeight="Bold"
+											   Foreground="#E0B0FF"
+											   HorizontalAlignment="Center"/>
+								</StackPanel>
+							</Border>
+
+						</WrapPanel>
+						<!-- 统计图表区域 -->
+						<Border Grid.Row="1"
+								Background="#1A1032"
+								CornerRadius="12"
+								Padding="15">
+							<StackPanel>
+								<TextBlock Text="数据统计分析"
+										   FontSize="16"
+										   FontWeight="SemiBold"
+										   Foreground="#E0B0FF"
+										   Margin="0,0,0,15"/>
+
+								<Border Background="#2A1A4A"
+										Height="300"
+										CornerRadius="8">
+
+									<Border Background="#332255"
+											Opacity="0.9"
+											CornerRadius="8"
+											Padding="20">
+
+										<StackPanel HorizontalAlignment="Center"
+													VerticalAlignment="Center">
+
+											<TextBlock Text="📊 统计图表展示区域"
+													   Foreground="#B39DDB"
+													   FontSize="14"
+													   HorizontalAlignment="Center"/>
+
+											<TextBlock Text="柱状图 / 折线图"
+													   Foreground="#957DAD"
+													   FontSize="12"
+													   HorizontalAlignment="Center"
+													   Margin="0,5,0,0"/>
+
+										</StackPanel>
+
+									</Border>
+
+								</Border>
+
+							</StackPanel>
+
+						</Border>
+
+					</Grid>
+				</ScrollViewer>
+			</TabItem>
+		</TabControl>
+
+		<!-- 状态栏 -->
+		<Border Grid.Row="2"
+                Background="#1A1032"
+                Padding="1"
+                BorderThickness="0,1,0,0"
+                BorderBrush="#4A2A6A">
+			<Grid ColumnDefinitions="Auto,*,Auto">
+				<StackPanel Orientation="Horizontal" Spacing="20">
+					<TextBlock Text="⏱️ 最后更新: 2024-01-15 14:30:25"
+                               Foreground="#B39DDB"/>
+					<TextBlock Text="📡 连接状态: 在线"
+                               Foreground="#7CB342"/>
+				</StackPanel>
+				<TextBlock Grid.Column="2"
+                           Text="✨ 数据采集正常"
+                           Foreground="#E0B0FF"/>
+			</Grid>
+		</Border>
+	</Grid>
+</UserControl>

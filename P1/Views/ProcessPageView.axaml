@@ -1,0 +1,109 @@
+﻿<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="800"
+             d:DesignHeight="450"
+             xmlns:vm="clr-namespace:P1.ViewModels"
+             x:Class="P1.Views.ProcessPageView"
+             x:DataType="vm:ProcessPageViewModel">
+
+	<Design.DataContext>
+		<vm:ProcessPageViewModel/>
+	</Design.DataContext>
+
+
+	<Grid Background="#1A1032" Margin="10" RowDefinitions="Auto,*,Auto">
+
+		<!-- ================= 顶部 ================= -->
+		<Border Grid.Row="0"
+                Background="#241A45"
+                CornerRadius="6"
+                Padding="10"
+                Margin="0,0,0,8">
+			<DockPanel LastChildFill="False">
+				<TextBlock Text="AI 状态："
+                           Foreground="#BFB7FF"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left"/>
+				<TextBlock Text="{Binding AiOnClose}"
+                           Foreground="#BFB7FF"
+                           VerticalAlignment="Center"
+                           DockPanel.Dock="Left"/>
+
+				<Button Content="开启连接AI"
+                        Command="{Binding OpenAiCommand}"
+                        Width="120"
+                        Height="32"
+                        FontSize="16"
+                        Background="#6C5DD3"
+                        Foreground="White"
+                        DockPanel.Dock="Right"/>
+			</DockPanel>
+		</Border>
+
+		<!-- ================= 聊天记录 ================= -->
+		<Border Grid.Row="1"
+                Background="#20163F"
+                CornerRadius="6"
+                Padding="10">
+
+			<ScrollViewer VerticalScrollBarVisibility="Auto">
+				<ItemsControl ItemsSource="{Binding Messages}">
+					<ItemsControl.ItemTemplate>
+						<DataTemplate>
+							<Border Classes="chat"
+                                    Classes.user="{Binding IsUser}">
+								<TextBlock Text="{Binding Text}"
+                                           Foreground="White"
+                                           TextWrapping="Wrap"/>
+							</Border>
+						</DataTemplate>
+					</ItemsControl.ItemTemplate>
+				</ItemsControl>
+			</ScrollViewer>
+
+		</Border>
+
+		<Border Grid.Row="2"
+				Background="#241A45"
+				CornerRadius="6"
+				Padding="8"
+				Margin="0,8,0,0">
+
+			<DockPanel LastChildFill="True">
+
+				<!-- 语音按钮 -->
+				<Button Content="🎤"
+						Command="{Binding ReadSpeechCommand}"
+						Width="40"
+						Height="36"
+						FontSize="18"
+						Margin="0,0,8,0"
+						DockPanel.Dock="Left"
+						Background="#3A2D6F"
+						Foreground="White"/>
+
+				<!-- 发送按钮-->
+				<Button Content="发送"
+						Command="{Binding SendMessageCommand}"
+						Width="80"
+						Margin="8,0,0,0"
+						DockPanel.Dock="Right"
+						Background="#6C5DD3"
+						Foreground="White"/>
+
+				<!-- 输入框 -->
+				<TextBox Text="{Binding InputText, Mode=TwoWay}"
+						 AcceptsReturn="True"
+						 TextWrapping="Wrap"
+						 MinHeight="36"
+						 VerticalContentAlignment="Center"
+						 Watermark="请输入内容…或点击麦克风说话"/>
+
+			</DockPanel>
+		</Border>
+
+	</Grid>
+</UserControl>

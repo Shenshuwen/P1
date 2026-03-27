@@ -1,0 +1,24 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <Border Padding="20">
+      <!-- Add Controls for Previewer Here -->
+    </Border>
+  </Design.PreviewWith>
+
+	<!-- 默认：AI 消息（左） -->
+	<Style Selector="Border.chat">
+		<Setter Property="Background" Value="#2E235E"/>
+		<Setter Property="HorizontalAlignment" Value="Left"/>
+		<Setter Property="CornerRadius" Value="6"/>
+		<Setter Property="Padding" Value="8"/>
+		<Setter Property="MaxWidth" Value="520"/>
+		<Setter Property="Margin" Value="0,4"/>
+	</Style>
+
+	<!-- 用户消息（右） -->
+	<Style Selector="Border.chat.user">
+		<Setter Property="Background" Value="#6C5DD3"/>
+		<Setter Property="HorizontalAlignment" Value="Right"/>
+	</Style>
+</Styles>

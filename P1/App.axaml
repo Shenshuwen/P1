@@ -1,0 +1,74 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             x:Class="P1.App"
+             xmlns:local="using:P1"
+             RequestedThemeVariant="Default">
+             <!-- "Default" ThemeVariant follows system theme variant. "Dark" or "Light" are other available options. -->
+
+    <Application.DataTemplates>
+        <local:ViewLocator/>
+    </Application.DataTemplates>
+  
+    <Application.Styles>
+        <FluentTheme />
+        <StyleInclude Source="Styles/AppDefaultStyle.axaml"/>
+        <StyleInclude Source="Styles/ProcessStyle.axaml"/>
+    </Application.Styles>
+
+
+	<!--<Application.Resources>
+		<SolidColorBrush x:Key="PrimaryBackground">#14172D</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryForeground">#CFCFCF</SolidColorBrush>
+
+		<LinearGradientBrush x:Key="PrimaryBackgroundGradient" StartPoint="0%,0%" EndPoint="100%,0%">
+			<GradientStop Offset="0" Color="#111214"></GradientStop>
+			<GradientStop Offset="1" Color="#151E3E"></GradientStop>
+		</LinearGradientBrush>
+
+		<SolidColorBrush x:Key="PrimaryHoverBackground">#333B5A</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryActiveBackground">#6633dd</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryHoverForeground" Color="white"></SolidColorBrush>
+	</Application.Resources>-->
+	<!--深紫主题 -->
+	<!--<Application.Resources>
+		 
+		<SolidColorBrush x:Key="PrimaryBackground">#1A1B26</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryForeground">#E2E8F0</SolidColorBrush>
+
+		<LinearGradientBrush x:Key="PrimaryBackgroundGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+			<GradientStop Offset="0" Color="#1A1B26"/>
+			<GradientStop Offset="0.5" Color="#24283B"/>
+			<GradientStop Offset="1" Color="#1A1B26"/>
+		</LinearGradientBrush>
+		<SolidColorBrush x:Key="PrimaryHoverBackground">#2A2D3E</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryActiveBackground">#7C3AED</SolidColorBrush>
+		<SolidColorBrush x:Key="PrimaryHoverForeground" Color="White"/>
+		<SolidColorBrush x:Key="AccentPurple">#7C3AED</SolidColorBrush>
+		<SolidColorBrush x:Key="AccentFuchsia">#D946EF</SolidColorBrush>
+		<SolidColorBrush x:Key="AccentPink">#EC4899</SolidColorBrush>
+		<SolidColorBrush x:Key="AccentBlue">#3B82F6</SolidColorBrush>
+		<SolidColorBrush x:Key="AccentCyan">#22D3EE</SolidColorBrush>
+	</Application.Resources>-->
+		<Application.Resources>
+			<SolidColorBrush x:Key="PrimaryBackground">#0A0E14</SolidColorBrush>
+			<SolidColorBrush x:Key="PrimaryForeground">#E0E0FF</SolidColorBrush>
+
+			<LinearGradientBrush x:Key="PrimaryBackgroundGradient" StartPoint="0%,0%" EndPoint="100%,100%">
+				<GradientStop Offset="0" Color="#0A0E14"/>
+				<GradientStop Offset="0.3" Color="#1A1032"/>
+				<GradientStop Offset="0.7" Color="#1A1032"/>
+				<GradientStop Offset="1" Color="#0A0E14"/>
+			</LinearGradientBrush>
+
+			<SolidColorBrush x:Key="PrimaryHoverBackground">#1E1B4B</SolidColorBrush>
+			<SolidColorBrush x:Key="PrimaryActiveBackground">#8B5CF6</SolidColorBrush>
+			<SolidColorBrush x:Key="PrimaryHoverForeground" Color="White"/>
+			<SolidColorBrush x:Key="AccentNeonPurple">#8B5CF6</SolidColorBrush>
+			<SolidColorBrush x:Key="AccentNeonPink">#EC4899</SolidColorBrush>
+			<SolidColorBrush x:Key="AccentNeonCyan">#00F5FF</SolidColorBrush>
+			<SolidColorBrush x:Key="AccentNeonGreen">#00FFAB</SolidColorBrush>
+			<SolidColorBrush x:Key="AccentNeonYellow">#FFEE00</SolidColorBrush>
+		</Application.Resources>
+
+
+</Application>
