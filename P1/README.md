@@ -4,7 +4,7 @@
 `P1` 是基于 `Avalonia + .NET 8 + CommunityToolkit.Mvvm` 的桌面端实验室监测应用，当前聚焦于：
 - 通过 TCP 与实验室模块通信，轮询采集风速/压力/温湿度
 - 实时看板展示与历史记录展示
-- 接入本地 AI（OpenAI 兼容接口）进行问答，并支持语音播报
+- 接入本地 AI（`LLamaSharp` + `GGUF` 模型）进行问答
 
 当前工程：`net8.0`、C# `12.0`。
 
@@ -24,9 +24,9 @@
 3. **新增网络抽象说明**
    - 补充 `ITcpModuleClient` 与 `TcpModuleClient` 的职责分离，便于后续测试替换与通信实现扩展。
 
-4. **AI 与语音链路说明补充**
-   - 明确 `ProcessPageViewModel` -> `SpeechHelper` -> 本地 AI 服务的调用路径。
-   - 说明 AI 回复事件回传 UI 与 `System.Speech` 语音播报。
+4. **AI 链路说明补充**
+   - 明确 `ProcessPageViewModel` 内通过 `LLamaSharp` 直接加载本地 `GGUF` 模型。
+   - 支持通过 `[TOOL:READ_ENV]` 触发实验室状态读取，再次补充上下文回答。
 
 5. **“已实现功能 / 未完成功能”重新梳理**
    - 明确已实现能力边界，保留当前未完成项（如语音识别输入、历史导出逻辑）。
@@ -46,6 +46,7 @@
 - `Avalonia.Themes.Fluent`
 - `Avalonia.Fonts.Inter`
 - `CommunityToolkit.Mvvm`
+- `LLamaSharp`
 - `System.Speech`
 - `TouchSocket`（当前核心通信代码主要使用 `TcpClient`）
 
@@ -74,12 +75,9 @@
 - 历史页绑定 `History` 并展示表格。
 
 ### 4) AI 问答与语音播报
-- `ProcessPageViewModel.OpenAi()` 可测试并建立 AI 可用状态。
-- `SendMessage()` 支持基于关键词自动拼接实验室实时上下文。
-- `SpeechHelper` 调用本地 OpenAI 兼容接口：
-  - `GET /v1/models`（连通性）
-  - `POST /v1/chat/completions`（对话）
-- AI 回复可自动语音播报。
+- `ProcessPageViewModel.OpenAi()` 直接加载本地 `GGUF` 模型并建立 `ChatSession`。
+- `SendMessage()` 支持流式输出回复。
+- 当模型输出 `[TOOL:READ_ENV]` 时，自动读取 `LabStatusService.GetSummary()` 并补充系统消息继续回答。
 
 ### 5) 设置页参数管理与 AT 指令生成
 - `SettingPageViewModel` 已支持：
@@ -116,7 +114,7 @@
 | `Common/CommunBll.cs` | 十六进制指令处理与 CRC16 |
 | `Common/Decode.cs` | 传感器响应解析 |
 | `Common/LabStatusService.cs` | 实时状态与历史记录共享 |
-| `Common/SpeechHelper.cs` | AI HTTP 调用与 TTS 语音播报 |
+| `Common/SpeechHelper.cs` | 预留 AI HTTP 调用与 TTS 语音播报能力 |
 
 ---
 
@@ -124,7 +122,7 @@
 
 1. 准备 .NET 8 SDK。
 2. 确保传感器模块可达（默认 `192.168.3.100:10193`，可在设置页修改）。
-3. 若需 AI 对话，启动本地 OpenAI 兼容服务（默认 `http://localhost:1234`）。
+3. 若需 AI 对话，确保本地 `GGUF` 模型路径可用（当前写死在 `ProcessPageViewModel.OpenAi()`）。
 4. 执行：
    - `dotnet restore`
    - `dotnet build`
@@ -135,3 +133,14 @@
 ## 备注
 
 当前版本重心是“采集 + 展示 + AI 联动”的主流程跑通。后续建议优先补齐导出与语音输入，并进一步完善历史记录策略与线程安全边界。
+
+---
+
+## 本次修复记录（本地大模型）
+
+- 修复 `ProcessPageViewModel` 编译错误：
+  - `ChatMessage` 增加 `partial`，匹配 `ObservableProperty` 源生成器要求。
+  - 修正不存在变量：`triggerMessage` / `uiMessage` / `systemUpdate`。
+  - 修正 `InferenceParams` 配置方式，改为 `SamplingPipeline = new DefaultSamplingPipeline { Temperature = 0.7f }`。
+  - 修正实验室状态读取字段，改为使用 `LabStatusService.GetSummary()`。
+- 已通过 `dotnet build`（`net8.0`）编译验证。
