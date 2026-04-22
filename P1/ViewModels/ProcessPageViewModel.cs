@@ -14,7 +14,7 @@ using LLama.Sampling;
 
 namespace P1.ViewModels
 {
-    public partial class ProcessPageViewModel : ViewModelBase
+    public partial class ProcessPageViewModel : ViewModelBase, IDisposable
     {
         // ================= 聊天消息模型 =================
         public partial class ChatMessage : ObservableObject
@@ -43,11 +43,11 @@ namespace P1.ViewModels
 
         [ObservableProperty]
         private string aiOnClose = "未连接";
+        // ================= RS485语音助手 =================
+        private readonly SpeechHelper _speechHelper = new();
 
         // ================= 消息集合 =================
         public ObservableCollection<ChatMessage> Messages { get; } = new();
-
-        private SpeechHelper? _speechHelper;
 
         private static string BuildExceptionMessage(Exception ex)
         {
@@ -185,8 +185,8 @@ namespace P1.ViewModels
                     var chatHistory = new ChatHistory();
                     string systemPrompt = @"你是实验室智能助手.
                     提供关于实验室环境和设备的实时信息。请基于用户的问题和实验室状态数据进行回答。
-                    【查询模式】:如果用户的问题涉及温度、湿度等实验室环境或设备状态等内容，请使用[TOOL:READ_ENV]格式提供回答.
-                    【普通模式】:如果用户的问题不涉及实验室环境或设备状态等内容，请直接回答问题，不要使用工具格式.";
+                    【查询模式】:如果用户的问题涉及实验室的温度、湿度等实验室环境内容，请使用[TOOL:READ_ENV]格式提供回答.
+                    【普通模式】:如果用户的问题不涉及实验室环境内容，请直接回答问题，不要使用工具格式.";
 
                     chatHistory.AddMessage(AuthorRole.System,systemPrompt);
                     _session = new ChatSession(_executor, chatHistory);
@@ -276,6 +276,7 @@ namespace P1.ViewModels
                     if (_labStatus.History.Count == 0)
                     {
                         Dispatcher.UIThread.Post(() => aiMessage.Text = "当前暂无实验室实时数据（设备未连接或离线），无法提供温湿度读数。");
+                        _speechHelper.Speak("当前暂无实验室实时数据，无法提供温湿度读数。");
                         return;
                     }
 
@@ -292,11 +293,18 @@ namespace P1.ViewModels
                         Dispatcher.UIThread.Post(() => aiMessage.Text = displayText);
                     }
                 }
+                string finalCleanText = NormalizeAiText(aiResponseBuffer);
+                if (!string.IsNullOrWhiteSpace(finalCleanText))
+                {
+                    finalCleanText = finalCleanText.Replace("*", "").Replace("#", "");
+                    Task.Run(() => _speechHelper.Speak(finalCleanText));
+                }
             }
-            catch (Exception ex)
-            {
-                Dispatcher.UIThread.Post(() => aiMessage.Text = $"❌ AI 响应失败: {BuildExceptionMessage(ex)}");
-            }
+                catch (Exception ex)
+                {
+                    Dispatcher.UIThread.Post(() => aiMessage.Text = $"❌ AI 响应失败: {BuildExceptionMessage(ex)}");
+                    _speechHelper.Speak("抱歉，处理您的请求时发生了错误。");
+                 }
         }
 
         // ================= 麦克风按钮 =================
@@ -305,6 +313,17 @@ namespace P1.ViewModels
         {
 
             
+        }
+
+        public void Dispose()
+        {
+            _speechHelper.Dispose();
+            _session = null;
+            _executor = null;
+            _context?.Dispose();
+            _weights?.Dispose();
+            _context = null;
+            _weights = null;
         }
     }
 }

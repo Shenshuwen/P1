@@ -1,11 +1,13 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using System;
+using System;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using P1.Models;
 using P1.Views;
 
 namespace P1.ViewModels
 {
-    public partial class MainWindowViewModel : ViewModelBase
+    public partial class MainWindowViewModel : ViewModelBase, IDisposable
     {
         private const string buttonActiveClass = "active";
 
@@ -63,6 +65,12 @@ namespace P1.ViewModels
         public void GoToHistory()
         {
             CurrentPage = _historyPage;
+        }
+
+        public void Dispose()
+        {
+            _processPage.Dispose();
+            GC.SuppressFinalize(this);
         }
 
     }

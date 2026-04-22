@@ -144,3 +144,32 @@
   - 修正 `InferenceParams` 配置方式，改为 `SamplingPipeline = new DefaultSamplingPipeline { Temperature = 0.7f }`。
   - 修正实验室状态读取字段，改为使用 `LabStatusService.GetSummary()`。
 - 已通过 `dotnet build`（`net8.0`）编译验证。
+
+---
+
+## 追加记录（2026-04-22 16:35）
+
+### 本次代码修改
+
+1. 按硬件拓扑将 `Common/SpeechHelper.cs` 从串口(`SerialPort`)改为 TCP 发送：
+   - 通过 `ModuleConnectionOptions.Instance` 读取模块 IP/端口。
+   - 发送内容保持语音模块命令格式：`#[v8]{text}`（TCP 下发送 `\r\n` 结尾）。
+2. 增加语音发送容错：
+   - 首次发送失败后自动重连并重发一次。
+3. 增加资源释放链路：
+   - `ProcessPageViewModel` 实现 `IDisposable`，释放语音连接与模型资源。
+   - `MainWindowViewModel` 实现 `IDisposable`，统一调用页面释放。
+   - `MainWindow` 在关闭时触发 `Dispose()`。
+
+### 问题回答
+
+1. **“模块是 Modbus RTU，但当前代码没体现 Modbus RTU，是否正确？”**
+   - 对“语音播报”这条链路来说，当前写法是合理的：你给语音模块下发的是其私有文本命令（如 `#[v8]...`），不是传感器寄存器读写，因此不需要按 Modbus RTU 组帧。
+   - 只有当你的语音模块协议文档明确要求“必须按 Modbus RTU 帧（地址/功能码/CRC）”时，才需要实现 Modbus RTU 封包。
+
+2. **“目前能否完成功能？”**
+   - 目前代码已具备“AI 文本 -> TCP -> RS485-WiFi 模块 -> 语音模块播报”的软件链路能力。
+   - 真实可用还依赖三项现场条件：
+     - WiFi 模块 TCP 模式与 IP/端口配置正确；
+     - 模块确实把 TCP 透传到 RS485；
+     - 语音模块命令格式与波特率/串口参数匹配。
